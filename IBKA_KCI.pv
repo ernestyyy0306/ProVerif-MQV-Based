@@ -1,0 +1,134 @@
+free c:channel. (*public channel*)
+
+(*Diffie-hellman encryption*)
+type G.
+type exponent.
+const g:G [data].
+fun exp(G,exponent):G.
+equation forall x:exponent,y:exponent;
+exp(exp(g,x),y)=exp(exp(g,y),x).
+
+(*Exponent Addition*)
+fun eadd(exponent,exponent):exponent.
+equation forall x:exponent,y:exponent;
+eadd(x,y)=eadd(y,x).
+
+(*Addition*)
+fun add(G,G):G.
+equation forall x:G,y:G;
+add(x,y)=add(y,x).
+
+(*Exponent Multiplication*)
+fun emul(exponent,exponent):exponent.
+equation forall x:exponent,y:exponent;
+emul(x,y)=emul(y,x).
+
+(*Multiplication*)
+fun mul(G,G):G.
+equation forall a:G,b:G;
+mul(a,b)=mul(b,a).
+(*For exponent power rule*)
+reduc forall x:exponent,y:exponent;
+dis_mul(exp(g,x),y)=exp(g,emul(x,y)).           
+(*For exponent product rule*)
+reduc forall x:exponent,y:exponent;             
+dis_add(exp(g,x),exp(g,y))=exp(g,eadd(x,y)).
+
+(*Identity*)
+type ID.
+free idA:ID [private].
+free idB:ID [private].
+
+(*Hash Function*)
+fun h1(ID,G):exponent.
+fun h2(G,G):G.
+
+(*Symmetric encryption*)
+fun senc(bitstring, G): bitstring.
+reduc forall m:bitstring, k:G; sdec(senc(m,k),k)=m.
+
+free secretA,secretB: bitstring [private].
+
+free a:exponent [private].
+free b:exponent [private].
+
+event Asuccess.     
+event Bsuccess. 
+
+event termB(G, G, bitstring).
+event acceptsB(G, G, bitstring, G).
+event acceptsA(G, G, bitstring).
+event termA(G, G, bitstring, G).
+event Send(G, G, bitstring).
+event Recv(G, G, bitstring).
+
+query attacker(secretA);    (*Check secrecy of A*)
+    attacker(secretB).      (*Check secrecy of B*)
+
+query event(Asuccess).  (*Check whether A successfully decrypt message send by B*)
+query event(Bsuccess).  (*Check whether B successfully decrypt message send by A*)
+
+(*Key Compromise Impersonation Query*)
+query x:G, y:G, z:bitstring; event(Recv(x,exp(g,b),z)) ==> event(Send(x,exp(g,b),z)).
+
+let principalA(S:G,sA:exponent,pkA:G,pkB:G)=
+    new x:exponent;
+    let(X:G)=exp(g,x) in
+    out(c,(idA,pkA,X));
+    in(c,m:bitstring);
+    let(principalID:ID,principalPK:G,Y:G)=m in
+    if principalID=idB && principalPK=pkB then
+    let(hB:exponent)=h1(principalID,pkB) in
+    let(z1:G)=exp(dis_add(Y,dis_add(pkB,dis_mul(S,(hB)))),eadd(sA,x)) in
+    let(z2:G)=exp(Y,x) in
+    let(key:G)=h2(z1,z2) in
+    event acceptsA(pkA, principalPK, (idA,pkA,X));
+    event termA(pkA, principalPK, m, key);
+    
+    out(c,senc(secretA,key));
+    event Send(pkA,principalPK,secretA);
+
+	in(c,m2:bitstring);
+	let(msg:bitstring)=sdec(m2,key) in
+	if msg=secretB then
+    event Asuccess.
+
+let principalB(S:G,sB:exponent,pkB:G,pkA:G)=
+    in(c,m:bitstring);
+    let(principalID:ID,principalPK:G,X:G)=m in
+    if principalID=idA && principalPK=pkA then
+    new y:exponent;
+    let(Y:G)=exp(g,y) in
+    out(c,(idB,pkB,Y));
+    let(hA:exponent)=h1(principalID,principalPK) in
+    let(z1:G)=exp(dis_add(X,dis_add(principalPK,dis_mul(S,(hA)))),eadd(sB,y)) in
+    let(z2:G)=exp(X,y) in
+    let(key:G)=h2(z1,z2) in
+    event acceptsB(principalPK, pkB, (idB,pkB,Y), key);
+    event termB(principalPK, pkB, m);
+
+    out(c,senc(secretB,key));
+
+	in(c,m2:bitstring);
+	let(msg:bitstring)=sdec(m2,key) in
+    event Recv(principalPK,pkB,msg);
+	if msg=secretA then
+    event Bsuccess.
+    
+let KGC(s:exponent)=
+    in(c,idX:ID);
+    new skX:exponent; 
+    let(pkX:G)=exp(g,skX) in 
+    let(hX:exponent)=h1(idX,pkX) in 
+    let(sX:exponent)=eadd(skX,emul(hX,s)) in
+    out(c,(pkX,sX)).
+
+process
+    new s:exponent; let S=exp(g,s) in out(c,S);
+    new skA:exponent; let(pkA:G)=exp(g,skA) in out(c,skA);
+    let(hA:exponent)=h1(idA,pkA) in 
+    let(sA:exponent)=eadd(skA,emul(hA,s)) in
+    new skB:exponent; let(pkB:G)=exp(g,skB) in 
+    let(hB:exponent)=h1(idB,pkB) in
+    let(sB:exponent)=eadd(skB,emul(hB,s)) in
+    (!principalA(S,sA,pkA,pkB)|!principalB(S,sB,pkB,pkA))

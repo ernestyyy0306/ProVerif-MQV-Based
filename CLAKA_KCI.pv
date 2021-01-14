@@ -1,0 +1,141 @@
+free c:channel. (*public channel*)
+
+(*Diffie-hellman encryption*)
+type G.
+type exponent.
+const g:G [data].
+fun exp(G,exponent):G.
+equation forall x:exponent,y:exponent;
+exp(exp(g,x),y)=exp(exp(g,y),x).
+
+(*Exponent Addition*)
+fun eadd(exponent,exponent):exponent.
+equation forall x:exponent,y:exponent;
+eadd(x,y)=eadd(y,x).
+
+(*Addition*)
+fun add(G,G):G.
+equation forall x:G,y:G;
+add(x,y)=add(y,x).
+
+(*Exponent Multiplication*)
+fun emul(exponent,exponent):exponent.
+equation forall x:exponent,y:exponent;
+emul(x,y)=emul(y,x).
+
+(*Multiplication*)
+fun mul(G,G):G.
+equation forall a:G,b:G;
+mul(a,b)=mul(b,a).
+(*For exponent power rule*)
+reduc forall x:exponent,y:exponent;
+dis_mul(exp(g,x),y)=exp(g,emul(x,y)).           
+(*For exponent product rule*)
+reduc forall x:exponent,y:exponent;             
+dis_add(exp(g,x),exp(g,y))=exp(g,eadd(x,y)).
+
+(*Identity*)
+type ID.
+free idA:ID.
+free idB:ID.
+
+(*Concatenation*)
+fun conc(ID,ID,G,G,G,G,G):G.
+
+(*Hash Function*)
+fun h1(ID,G):exponent.
+fun h2(G):G.
+
+(*Symmetric encryption*)
+fun senc(bitstring, G): bitstring.
+reduc forall m:bitstring, k:G; sdec(senc(m,k),k)=m.
+
+free secretA,secretB: bitstring [private].
+
+free a:exponent [private].
+free b:exponent [private].
+
+event Asuccess.     
+event Bsuccess. 
+
+event termB(G, G, bitstring).
+event acceptsB(G, G, bitstring, G).
+event acceptsA(G, G, bitstring).
+event termA(G, G, bitstring, G).
+event Send(G, G, bitstring).
+event Recv(G, G, bitstring).
+
+query attacker(secretA);    (*Check secrecy of A*)
+    attacker(secretB).      (*Check secrecy of B*)
+
+query event(Asuccess).  (*Check whether A successfully decrypt message send by B*)
+query event(Bsuccess).  (*Check whether B successfully decrypt message send by A*)
+
+(*Key Compromise Impersonation Query*)
+query x:G, y:G, z:bitstring; event(Recv(x,exp(g,b),z)) ==> event(Send(x,exp(g,b),z)).
+
+let principalA(a:exponent,B:G,S:G,sA:exponent,RA:G)=
+    in(c,pkX:G);
+    new x:exponent;
+    let(X:G)=exp(g,x) in
+    out(c,(idA,RA,X));
+    event acceptsA(exp(g,a), B, (idA,RA,X));
+    in(c,m:bitstring);
+    let(principalID:ID,prinR:G,Y:G)=m in
+    let principalPK= if principalID=idB then B else pkX in
+    let(hB:exponent)=h1(principalID,prinR) in
+    let(z1:G)=exp(dis_add(Y,dis_add(prinR,dis_mul(S,(hB)))),eadd(sA,x)) in
+    let(z2:G)=exp(dis_add(Y,B),eadd(x,a)) in
+    let(z3:G)=exp(Y,x) in
+    let(key:G)=h2(conc(idA,principalID,X,Y,z1,z2,z3)) in
+    event termA(exp(g,a), B, m, key);
+
+    out(c,senc(secretA,key));
+    event Send(exp(g,a),B,secretA);
+
+	in(c,m2:bitstring);
+	let(msg:bitstring)=sdec(m2,key) in
+	if msg=secretB then
+    event Asuccess.
+
+let principalB(b:exponent,A:G,S:G,sB:exponent,RB:G)=
+    in(c,pkX:G);
+    new y:exponent;
+    let(Y:G)=exp(g,y) in
+    out(c,(idB,RB,Y));
+    in(c,m:bitstring);
+    let(principalID:ID,prinR:G,X:G)=m in
+    let principalPK= if principalID=idA then A else pkX in
+    let(hA:exponent)=h1(principalID,prinR) in
+    let(z1:G)=exp(dis_add(X,dis_add(prinR,dis_mul(S,(hA)))),eadd(sB,y)) in
+    let(z2:G)=exp(dis_add(X,A),eadd(y,b)) in
+    let(z3:G)=exp(X,y) in
+    let(key:G)=h2(conc(principalID,idB,X,Y,z1,z2,z3)) in
+    event acceptsB(A, exp(g,b), (idB,RB,Y), key);
+    event termB(A, exp(g,b), m);
+
+    out(c,senc(secretB,key));
+	in(c,m2:bitstring);
+	let(msg:bitstring)=sdec(m2,key) in
+    event Recv(A,exp(g,b),msg);
+	if msg=secretA then
+    event Bsuccess.
+
+let KGC(s:exponent)=
+    in(c,idX:ID);
+    new rX:exponent; let(RX:G)=exp(g,rX) in 
+    let(hX:exponent)=h1(idX,RX) in 
+    let(sX:exponent)=eadd(rX,emul(hX,s)) in
+    out(c,(rX,sX)).
+
+process
+    new a:exponent; let A=exp(g,a) in out(c,(A,a);
+    new b:exponent; let B=exp(g,b) in out(c,B);
+    new s:exponent; let S=exp(g,s) in out(c,S);
+    new rA:exponent; let(RA:G)=exp(g,rA) in 
+    let(hA:exponent)=h1(idA,RA) in 
+    let(sA:exponent)=eadd(rA,emul(hA,s)) in
+    new rB:exponent; let(RB:G)=exp(g,rB) in 
+    let(hB:exponent)=h1(idB,RB) in
+    let(sB:exponent)=eadd(rB,emul(hB,s)) in
+    (!principalA(a,B,S,sA,RA)|!principalB(b,A,S,sB,RB))

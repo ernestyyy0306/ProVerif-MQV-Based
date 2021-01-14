@@ -1,0 +1,184 @@
+digraph {
+graph [ordering = out]
+edge [arrowhead = none, penwidth = 1.6, fontsize = 30]
+node [shape = point, width = 0, height = 0, fontsize = 30]
+Trace [label = <A trace has been found.<br/>
+>, shape = plaintext]
+P0__0 [label = "Honest Process", shape = plaintext]
+P__0 [label = "Attacker", shape = plaintext]
+Trace -> P0__0 [label = "", style = invisible, weight = 100]{rank = same; P0__0 P__0}
+P0__0 -> P0__1 [label = <>, weight = 100]
+P0__1 -> P0__2 [label = <>, weight = 100]
+P0__2 [shape = plaintext, label = <<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4"> <TR><TD><FONT COLOR="darkgreen">{1}</FONT><FONT COLOR="blue">new </FONT>a_3</TD></TR></TABLE>>]
+P0__2 -> P0__3 [label = <>, weight = 100]
+P0__3 -> P0__4 [label = <>, weight = 100]
+P__0 -> P__1 [label = <>, weight = 100]
+{rank = same; P__1 P0__4}
+P0__4 -> P0__5 [label = <>, weight = 100]
+P__1 -> P__2 [label = <>, weight = 100]
+{rank = same; P__2 P0__5}
+P0__5 -> P__2 [label = <~M = exp(g,a_3)>, arrowhead = normal]
+P0__5 -> P0__6 [label = <>, weight = 100]
+P__2 -> P__3 [label = <>, weight = 100]
+{rank = same; P__3 P0__6}
+P0__6 -> P0__7 [label = <>, weight = 100]
+P0__7 [shape = plaintext, label = <<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4"> <TR><TD><FONT COLOR="darkgreen">{4}</FONT><FONT COLOR="blue">new </FONT>b_3</TD></TR></TABLE>>]
+P0__7 -> P0__8 [label = <>, weight = 100]
+P0__8 -> P0__9 [label = <>, weight = 100]
+P__3 -> P__4 [label = <>, weight = 100]
+{rank = same; P__4 P0__9}
+P0__9 -> P0__10 [label = <>, weight = 100]
+P__4 -> P__5 [label = <>, weight = 100]
+{rank = same; P__5 P0__10}
+P0__10 -> P__5 [label = <~M_1 = exp(g,b_3)>, arrowhead = normal]
+P0__10 -> P0__11 [label = <>, weight = 100]
+P__5 -> P__6 [label = <>, weight = 100]
+{rank = same; P__6 P0__11}
+/*RPar */
+P0__11 -> P0_1__11 [label = <>]
+P0__11 -> P0_0__11 [label = <>]
+P0__11 [label = "", fixedsize = false, width = 0, height = 0, shape = none]
+{rank = same; P0_0__11 P0_1__11}
+P0_0__11 [label = "!", shape = ellipse]
+P0_0_0__11 [label = "", fixedsize = false, width = 0, height = 0, shape = none]
+P0_0__11 -> P0_0_0__11 [label = <>, weight = 100]
+P0_0_0__11 -> P0_0_0__12 [label = <>, weight = 100]
+P0_0_0__12 [shape = plaintext, label = <<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4"> <TR><TD>Beginning of process <FONT COLOR="darkgreen">principalB</FONT></TD></TR></TABLE>>]
+P0_0_0__12 -> P0_0_0__13 [label = <>, weight = 100]
+P0_1__11 [label = "!", shape = ellipse]
+P0_1_0__11 [label = "", fixedsize = false, width = 0, height = 0, shape = none]
+P0_1__11 -> P0_1_0__11 [label = <>, weight = 100]
+P0_1_0__11 -> P0_1_0__12 [label = <>, weight = 100]
+P0_1_0__12 [shape = plaintext, label = <<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4"> <TR><TD>Beginning of process <FONT COLOR="darkgreen">principalA</FONT></TD></TR></TABLE>>]
+P0_1_0__12 -> P0_1_0__13 [label = <>, weight = 100]
+P0_1_0__13 -> P0_1_0__14 [label = <>, weight = 100]
+P0_0_0__13 -> P0_0_0__14 [label = <>, weight = 100]
+P__6 -> P__7 [label = <>, weight = 100]
+{rank = same; P__7 P0_0_0__14 P0_1_0__14}
+P0_1_0__14 -> P0_1_0__15 [label = <>, weight = 100]
+P__7 -> P__8 [label = <>, weight = 100]
+{rank = same; P__8 P0_1_0__15}
+P0_1_0__15 -> P__8 [label = <(~M,~M_1) = (exp(g,a_3),exp(g,b_3))>, dir = back, arrowhead = normal]
+P0_1_0__15 -> P0_1_0__16 [label = <>, weight = 100]
+P0_0_0__14 -> P0_0_0__15 [label = <>, weight = 100]
+P__8 -> P__9 [label = <>, weight = 100]
+{rank = same; P__9 P0_0_0__15 P0_1_0__16}
+P0_1_0__16 -> P0_1_0__17 [label = <>, weight = 100]
+P0_1_0__17 [shape = plaintext, label = <<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4"> <TR><TD><FONT COLOR="darkgreen">{11}</FONT><FONT COLOR="blue">new </FONT>x_1</TD></TR></TABLE>>]
+P0_1_0__17 -> P0_1_0__18 [label = <>, weight = 100]
+P0_1_0__18 -> P0_1_0__19 [label = <>, weight = 100]
+P0_0_0__15 -> P0_0_0__16 [label = <>, weight = 100]
+P__9 -> P__10 [label = <>, weight = 100]
+{rank = same; P__10 P0_0_0__16 P0_1_0__19}
+P0_1_0__19 -> P0_1_0__20 [label = <>, weight = 100]
+P__10 -> P__11 [label = <>, weight = 100]
+{rank = same; P__11 P0_1_0__20}
+P0_1_0__20 -> P__11 [label = <~M_2 = exp(g,x_1)>, arrowhead = normal]
+P0_1_0__20 -> P0_1_0__21 [label = <>, weight = 100]
+P0_0_0__16 -> P0_0_0__17 [label = <>, weight = 100]
+P__11 -> P__12 [label = <>, weight = 100]
+{rank = same; P__12 P0_0_0__17 P0_1_0__21}
+P0_0_0__17 -> P0_0_0__18 [label = <>, weight = 100]
+P__12 -> P__13 [label = <>, weight = 100]
+{rank = same; P__13 P0_0_0__18}
+P0_0_0__18 -> P0_0_0__19 [label = <>, weight = 100]
+P__13 -> P__14 [label = <>, weight = 100]
+{rank = same; P__14 P0_0_0__19}
+P0_0_0__19 -> P__14 [label = <(~M_1,~M) = (exp(g,b_3),exp(g,a_3))>, dir = back, arrowhead = normal]
+P0_0_0__19 -> P0_0_0__20 [label = <>, weight = 100]
+P__14 -> P__15 [label = <>, weight = 100]
+{rank = same; P__15 P0_0_0__20}
+P0_0_0__20 -> P0_0_0__21 [label = <>, weight = 100]
+P__15 -> P__16 [label = <>, weight = 100]
+{rank = same; P__16 P0_0_0__21}
+P0_0_0__21 -> P0_0_0__22 [label = <>, weight = 100]
+P__16 -> P__17 [label = <>, weight = 100]
+{rank = same; P__17 P0_0_0__22}
+P0_0_0__22 -> P__17 [label = <~M_2 = exp(g,x_1)>, dir = back, arrowhead = normal]
+P0_0_0__22 -> P0_0_0__23 [label = <>, weight = 100]
+P__17 -> P__18 [label = <>, weight = 100]
+{rank = same; P__18 P0_0_0__23}
+P0_0_0__23 -> P0_0_0__24 [label = <>, weight = 100]
+P0_0_0__24 [shape = plaintext, label = <<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4"> <TR><TD><FONT COLOR="darkgreen">{34}</FONT><FONT COLOR="blue">new </FONT>y_1</TD></TR><TR><TD><FONT COLOR="darkgreen">{36}</FONT><FONT COLOR="blue">event</FONT> acceptsB(exp(g,a_3),exp(g,b_3),exp(g,<br/>
+y_1))</TD></TR></TABLE>>]
+P0_0_0__24 -> P0_0_0__25 [label = <>, weight = 100]
+P0_0_0__25 -> P0_0_0__26 [label = <>, weight = 100]
+P__18 -> P__19 [label = <>, weight = 100]
+{rank = same; P__19 P0_0_0__26}
+P0_0_0__26 -> P0_0_0__27 [label = <>, weight = 100]
+P__19 -> P__20 [label = <>, weight = 100]
+{rank = same; P__20 P0_0_0__27}
+P0_0_0__27 -> P__20 [label = <~M_3 = exp(g,y_1)>, arrowhead = normal]
+P0_0_0__27 -> P0_0_0__28 [label = <>, weight = 100]
+P__20 -> P__21 [label = <>, weight = 100]
+{rank = same; P__21 P0_0_0__28}
+P0_0_0__28 -> P0_0_0__29 [label = <>, weight = 100]
+P0_0_0__29 [shape = plaintext, label = <<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4"> <TR><TD><FONT COLOR="darkgreen">{44}</FONT><FONT COLOR="blue">event</FONT> termB(exp(g,a_3),exp(g,b_3),exp(g,x_1),<br/>
+exp(exp(g,eadd(x_1,emul(a_3,eadd(exp(g,x_1),operation)))),<br/>
+eadd(y_1,emul(b_3,eadd(exp(g,y_1),operation)))))<br/>
+</TD></TR></TABLE>>]
+P0_0_0__29 -> P0_0_0__30 [label = <>, weight = 100]
+P0_0_0__30 -> P0_0_0__31 [label = <>, weight = 100]
+P__21 -> P__22 [label = <>, weight = 100]
+{rank = same; P__22 P0_0_0__31}
+P0_0_0__31 -> P0_0_0__32 [label = <>, weight = 100]
+P__22 -> P__23 [label = <>, weight = 100]
+{rank = same; P__23 P0_0_0__32}
+P0_0_0__32 -> P__23 [label = <~M_4>, arrowhead = normal]
+P0_0_0__32 -> P0_0_0__33 [label = <>, weight = 100]
+P__23 -> P__24 [label = <>, weight = 100]
+{rank = same; P__24 P0_0_0__33}
+P0_1_0__21 -> P0_1_0__22 [label = <>, weight = 100]
+P0_0_0__33 -> P0_0_0__34 [label = <>, weight = 100]
+P__24 -> P__25 [label = <>, weight = 100]
+{rank = same; P__25 P0_0_0__34 P0_1_0__22}
+P0_1_0__22 -> P0_1_0__23 [label = <>, weight = 100]
+P__25 -> P__26 [label = <>, weight = 100]
+{rank = same; P__26 P0_1_0__23}
+P0_1_0__23 -> P__26 [label = <~M_3 = exp(g,y_1)>, dir = back, arrowhead = normal]
+P0_1_0__23 -> P0_1_0__24 [label = <>, weight = 100]
+P0_0_0__34 -> P0_0_0__35 [label = <>, weight = 100]
+P__26 -> P__27 [label = <>, weight = 100]
+{rank = same; P__27 P0_0_0__35 P0_1_0__24}
+P0_1_0__24 -> P0_1_0__25 [label = <>, weight = 100]
+P0_1_0__25 [shape = plaintext, label = <<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4"> <TR><TD><FONT COLOR="darkgreen">{20}</FONT><FONT COLOR="blue">event</FONT> acceptsA(exp(g,a_3),exp(g,b_3),exp(g,<br/>
+x_1),exp(exp(g,eadd(y_1,emul(b_3,eadd(exp(g,y_1),<br/>
+operation)))),eadd(x_1,emul(a_3,eadd(exp(g,x_1),<br/>
+operation)))))</TD></TR><TR><TD><FONT COLOR="darkgreen">{22}</FONT><FONT COLOR="blue">event</FONT> termA(exp(g,a_3),exp(g,b_3),exp(g,y_1))<br/>
+</TD></TR></TABLE>>]
+P0_1_0__25 -> P0_1_0__26 [label = <>, weight = 100]
+P0_1_0__26 -> P0_1_0__27 [label = <>, weight = 100]
+P0_0_0__35 -> P0_0_0__36 [label = <>, weight = 100]
+P__27 -> P__28 [label = <>, weight = 100]
+{rank = same; P__28 P0_0_0__36 P0_1_0__27}
+P0_1_0__27 -> P0_1_0__28 [label = <>, weight = 100]
+P__28 -> P__29 [label = <>, weight = 100]
+{rank = same; P__29 P0_1_0__28}
+P0_1_0__28 -> P__29 [label = <~M_5>, arrowhead = normal]
+P0_1_0__28 -> P0_1_0__29 [label = <>, weight = 100]
+P0_0_0__36 -> P0_0_0__37 [label = <>, weight = 100]
+P__29 -> P__30 [label = <>, weight = 100]
+{rank = same; P__30 P0_0_0__37 P0_1_0__29}
+P0_1_0__29 -> P0_1_0__30 [label = <>, weight = 100]
+P0_1_0__30 [shape = plaintext, label = <<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4"> <TR><TD><FONT COLOR="darkgreen">{24}</FONT><FONT COLOR="blue">event</FONT> Send(exp(g,a_3),exp(g,b_3),secretA)</TD></TR></TABLE>>]
+P0_1_0__30 -> P0_1_0__31 [label = <>, weight = 100]
+P0_1_0__31 -> P0_1_0__32 [label = <>, weight = 100]
+P0_0_0__37 -> P0_0_0__38 [label = <>, weight = 100]
+P__30 -> P__31 [label = <>, weight = 100]
+{rank = same; P__31 P0_0_0__38 P0_1_0__32}
+P0_1_0__32 -> P0_1_0__33 [label = <>, weight = 100]
+P__31 -> P__32 [label = <>, weight = 100]
+{rank = same; P__32 P0_1_0__33}
+P0_1_0__33 -> P__32 [label = <~M_4>, dir = back, arrowhead = normal]
+P0_1_0__33 -> P0_1_0__34 [label = <>, weight = 100]
+P0_0_0__38 -> P0_0_0__39 [label = <>, weight = 100]
+P__32 -> P__33 [label = <>, weight = 100]
+{rank = same; P__33 P0_0_0__39 P0_1_0__34}
+P0_1_0__34 -> P0_1_0__35 [label = <>, weight = 100]
+P0_1_0__35 [color = red, shape = plaintext, label = <<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4"> <TR><TD><FONT COLOR="darkgreen">{28}</FONT><FONT COLOR="blue">event</FONT> Asuccess</TD></TR></TABLE>>]
+P0_1_0__35 -> P0_1_0__36 [label = <>, weight = 100]
+Abbrev [shape = plaintext, label = <<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4"><TR> <TD> Abbreviations </TD></TR><TR><TD>~M_4 = senc(secretB,exp(exp(g,eadd(x_1,emul(a_3,<br/>
+eadd(exp(g,x_1),operation)))),eadd(y_1,emul(b_3,<br/>
+eadd(exp(g,y_1),operation)))))</TD></TR><TR><TD>~M_5 = senc(secretA,exp(exp(g,eadd(y_1,emul(b_3,<br/>
+eadd(exp(g,y_1),operation)))),eadd(x_1,emul(a_3,<br/>
+eadd(exp(g,x_1),operation)))))</TD></TR></TABLE>>]Abbrev -> P__0 [style = invisible, weight =100]}

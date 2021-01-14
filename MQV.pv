@@ -1,0 +1,139 @@
+free c:channel.
+
+(*Diffie-hellman encryption*)
+type G.
+type exponent.
+const g:G [data].
+fun exp(G,exponent):G.
+equation forall x:exponent,y:exponent;
+exp(exp(g,x),y)=exp(exp(g,y),x).
+
+(*Exponent Addition*)
+fun eadd(exponent,exponent):exponent.
+equation forall x:exponent,y:exponent;
+eadd(x,y)=eadd(y,x).
+
+(*Addition*)
+fun add(G,G):G.
+equation forall x:G,y:G;
+add(x,y)=add(y,x).
+
+(*Exponent Multiplication*)
+fun emul(exponent,exponent):exponent.
+equation forall x:exponent,y:exponent;
+emul(x,y)=emul(y,x).
+
+(*Multiplication*)
+fun mul(G,G):G.
+equation forall a:G,b:G;
+mul(a,b)=mul(b,a).
+(*For exponent power rule*)
+reduc forall x:exponent,y:exponent;
+dis_mul(exp(g,x),y)=exp(g,emul(x,y)).           
+(*For exponent product rule*)
+reduc forall x:exponent,y:exponent;             
+dis_add(exp(g,x),exp(g,y))=exp(g,eadd(x,y)).    
+
+(*Inverse*)
+type identity.
+fun inv(G):G.
+reduc forall a:G, b:G, c:identity;
+Imul(a,mul(b,inv(b))) = a.
+
+(*Symmetric encryption*)
+fun senc(bitstring, G): bitstring.
+reduc forall m:bitstring, k:G; sdec(senc(m,k),k)=m.
+
+(*Type converter*)
+fun G_to_exponent(G):exponent [data,typeConverter].
+
+free secretA,secretB: bitstring [private].
+free operation:exponent. (*For creating bar value of X or Y*)
+
+free a:exponent [private].
+free b:exponent [private].
+
+event Asuccess.     
+event Bsuccess.     
+
+event termA(G, G, G).
+event acceptsA(G, G, G, G).
+event acceptsB(G, G, G).
+event termB(G, G, G, G).
+event Send(G, G, bitstring).
+event Recv(G, G, bitstring).
+
+query attacker(secretA);    (*Check secrecy of A*)
+    attacker(secretB).      (*Check secrecy of B*)
+
+query event(Asuccess).  (*Check whether A successfully decrypt message send by B*)
+query event(Bsuccess).  (*Check whether B successfully decrypt message send by A*)
+
+(*Key Compromise Impersonation Query*)
+query x:G, y:G, z:bitstring; event(Recv(x,exp(g,b),z)) ==> event(Send(x,exp(g,b),z)).
+
+(*Mutual Authentication Query*)
+query x:G, y:G, z:G; event(termA(exp(g,a), y, z))==>event(acceptsB(exp(g,a), y, z)). 
+query x:G, y:G, z:G, k:G ; event(termB(x, exp(g,b), z, k))==>event(acceptsA(x, exp(g,b), z, k)). 
+
+(*AKE Query*)
+query x: G, y:G, z:G, k:G, k':G; 
+      event(termB(x,exp(g,b),z,k)) && event(acceptsA(x,exp(g,b),z,k')) ==> k = k'.
+
+(*UKS Query*)
+query x: G, y:G, y':G, z: G, z':G, k:G, k':G; 
+  event(termB(x,y,z,k)) && event(acceptsA(x,y',z',k')) ==> k = k'.
+
+let principalA(a:exponent,B:G)=
+    in(c,(self:G,principal:G));
+    if self=exp(g,a) then
+    new x:exponent;
+    let(X:G)=exp(g,x) in
+    out(c,X);
+    in(c,m:G);
+    let(XBar:exponent)=eadd(G_to_exponent(X),operation) in
+    let(YBar:exponent)=eadd(G_to_exponent(m),operation) in
+    let(Sa:exponent)=eadd(x,emul(a,XBar)) in
+    let(gSb:G)=dis_add(m,dis_mul(principal,YBar)) in
+    let(key:G)=exp(gSb,Sa) in
+    event acceptsA(self, principal, X, key);
+    if principal=B then
+    event termA(self, principal, m);
+
+    out(c,senc(secretA,key));
+    event Send(self,principal,secretA);
+
+	in(c,m2:bitstring);
+	let(msg:bitstring)=sdec(m2,key) in
+	if msg=secretB then
+    event Asuccess.
+
+let principalB(b:exponent,A:G)=
+    in(c,(self:G,principal:G));
+    if self=exp(g,b) then
+    in(c,m:G);
+    new y:exponent;
+    let(Y:G)=exp(g,y) in
+    event acceptsB(principal, self, Y);
+    out(c,Y);
+    let(XBar:exponent)=eadd(G_to_exponent(m),operation) in
+    let(YBar:exponent)=eadd(G_to_exponent(Y),operation) in
+    let(Sb:exponent)=eadd(y,emul(b,YBar)) in
+    let(gSa:G)=dis_add(m,dis_mul(principal,XBar)) in
+    let(key:G)=exp(gSa,Sb) in
+    if principal=A then
+    event termB(principal, self, m, key);
+
+    out(c,senc(secretB,key));
+
+	in(c,m2:bitstring);
+	let(msg:bitstring)=sdec(m2,key) in
+    event Recv(principal,self,msg);
+	if msg=secretA then
+    event Bsuccess.
+
+
+process
+    new a:exponent; let A=exp(g,a) in out(c,A);
+    new b:exponent; let B=exp(g,b) in out(c,B);
+    (!principalA(a,B)|!principalB(b,A))
